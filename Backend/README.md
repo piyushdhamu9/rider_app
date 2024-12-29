@@ -1,23 +1,12 @@
-# User Registration Endpoint
+# API Documentation
 
-## Endpoint: `/users/register`
+## Endpoints
 
-### Method: POST
+### POST /users/register
 
-### Description:
-This endpoint is used to register a new user. It validates the input data, hashes the password, creates a new user in the database, and returns a JSON Web Token (JWT) for authentication.
+Registers a new user.
 
-### Request Body:
-- `fullname.firstname` (string, required): The first name of the user. Must be at least 3 characters long.
-- `fullname.lastname` (string, optional): The last name of the user. Must be at least 3 characters long if provided.
-- `email` (string, required): The email address of the user. Must be a valid email format.
-- `password` (string, required): The password for the user. Must be at least 6 characters long.
-
-### Status Codes:
-- `201 Created`: The user was successfully created.
-- `400 Bad Request`: The request data is invalid or missing required fields.
-
-### Example Request:
+**Request Body:**
 ```json
 {
   "fullname": {
@@ -27,3 +16,68 @@ This endpoint is used to register a new user. It validates the input data, hashe
   "email": "john.doe@example.com",
   "password": "password123"
 }
+```
+
+**Response:**
+- `201 Created` on success
+```json
+{
+  "token": "jwt_token",
+  "user": {
+    "_id": "user_id",
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com",
+    "socketId": null
+  }
+}
+```
+- `400 Bad Request` if validation fails
+```json
+{
+  "errors": [
+    {
+      "msg": "Error message",
+      "param": "field",
+      "location": "body"
+    }
+  ]
+}
+```
+
+### POST /users/login
+
+Logs in an existing user.
+
+**Request Body:**
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+```
+
+**Response:**
+- `200 OK` on success
+```json
+{
+  "token": "jwt_token",
+  "user": {
+    "_id": "user_id",
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com",
+    "socketId": null
+  }
+}
+```
+- `400 Bad Request` if validation fails or credentials are incorrect
+```json
+{
+  "message": "Invalid Email or password"
+}
+```
