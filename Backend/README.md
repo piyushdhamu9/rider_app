@@ -190,3 +190,77 @@ Registers a new captain.
   ]
 }
 ```
+
+# Captain Routes Documentation
+
+## Register Captain
+
+**Endpoint:** `POST /captains/register`
+
+**Description:** Registers a new captain.
+
+**Request Body:**
+```json
+{
+  "fullname": {
+    "firstname": "string",
+    "lastname": "string"
+  },
+  "email": "string",
+  "password": "string",
+  "vehicle": {
+    "color": "string",
+    "vehicleType": "string",
+    "plateNumber": "string",
+    "capacity": "number"
+  }
+}
+```
+
+**Responses:**
+- `201 Created`: Returns the created captain and a token.
+- `400 Bad Request`: Returns validation errors or if the captain already exists.
+
+## Login Captain
+
+**Endpoint:** `POST /captains/login`
+
+**Description:** Logs in a captain.
+
+**Request Body:**
+```json
+{
+  "email": "string",
+  "password": "string"
+}
+```
+
+**Responses:**
+- `200 OK`: Returns the logged-in captain and a token.
+- `400 Bad Request`: Returns validation errors or if the credentials are invalid.
+
+## Get Captain Profile
+
+**Endpoint:** `GET /captains/profile`
+
+**Description:** Retrieves the profile of the logged-in captain.
+
+**Headers:**
+- `Authorization: Bearer <token>`
+
+**Responses:**
+- `200 OK`: Returns the captain's profile.
+- `401 Unauthorized`: If the token is missing or invalid.
+
+## Logout Captain
+
+**Endpoint:** `GET /captains/logout`
+
+**Description:** Logs out the captain.
+
+**Headers:**
+- `Authorization: Bearer <token>`
+
+**Responses:**
+- `200 OK`: Returns a success message.
+- `401 Unauthorized`: If the token is missing or invalid.
