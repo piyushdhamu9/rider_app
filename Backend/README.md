@@ -81,3 +81,54 @@ Logs in an existing user.
   "message": "Invalid Email or password"
 }
 ```
+
+### GET /users/profile
+
+Fetches the profile of the authenticated user.
+
+**Headers:**
+- `Authorization: Bearer jwt_token`
+
+**Response:**
+- `200 OK` on success
+```json
+{
+  "_id": "user_id",
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "john.doe@example.com",
+  "socketId": null
+}
+```
+- `401 Unauthorized` if the user is not authenticated
+```json
+{
+  "message": "Unauthorized"
+}
+```
+
+### GET /users/logout
+
+Logs out the authenticated user.
+
+**Headers:**
+- `Authorization: Bearer jwt_token` or use the `token` cookie
+
+**Response:**
+- `200 OK` on success
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+- `401 Unauthorized` if the user is not authenticated
+```json
+{
+  "message": "Unauthorized"
+}
+```
+
+**Note:**
+- The token used for authentication will be added to a blacklist to prevent reuse.
