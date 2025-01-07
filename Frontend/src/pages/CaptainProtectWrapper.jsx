@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { CaptainDataContext } from "../context/captainContext";
+import { CaptainDataContext } from "../context/CaptainContext";
 
 const CaptainProtectWrapper = ({ children }) => {
   const navigate = useNavigate();

@@ -1,4 +1,10 @@
-import React, { useState, useEffect, createContext, useContext, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  createContext,
+  useContext,
+  useMemo,
+} from "react";
 
 export const CaptainDataContext = createContext();
 
@@ -12,15 +18,18 @@ const CaptainContext = ({ children }) => {
   };
 
   // Memoize value to prevent unnecessary re-renders
-  const value = useMemo(() => ({
-    captain,
-    setCaptain,
-    isLoading,
-    setIsLoading,
-    error,
-    setError,
-    updateCaptain,
-  }), [captain, isLoading, error]);
+  const value = useMemo(
+    () => ({
+      captain,
+      setCaptain,
+      isLoading,
+      setIsLoading,
+      error,
+      setError,
+      updateCaptain,
+    }),
+    [captain, isLoading, error]
+  );
 
   return (
     <CaptainDataContext.Provider value={value}>

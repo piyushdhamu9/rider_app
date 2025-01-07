@@ -9,11 +9,14 @@ const UserLogout = () => {
   useEffect(() => {
     const logoutUser = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/logout`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/users/logout`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (response.status === 200) {
           localStorage.removeItem("token");
