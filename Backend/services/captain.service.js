@@ -4,7 +4,7 @@ module.exports.createCaptain = async ({
   fullname,
   email,
   password,
-  vehicle
+  vehicle,
 }) => {
   // Validate personal information
   if (!fullname?.firstname || !email || !password) {
@@ -12,7 +12,12 @@ module.exports.createCaptain = async ({
   }
 
   // Validate vehicle information
-  if (!vehicle?.color || !vehicle?.vehicleType || !vehicle?.plateNumber || !vehicle?.capacity) {
+  if (
+    !vehicle?.color ||
+    !vehicle?.vehicleType ||
+    !vehicle?.plateNumber ||
+    !vehicle?.capacity
+  ) {
     throw new Error("Vehicle information fields are required");
   }
 
@@ -24,7 +29,7 @@ module.exports.createCaptain = async ({
   const captain = await captainModel.create({
     fullname: {
       firstname: fullname.firstname,
-      lastname: fullname.lastname
+      lastname: fullname.lastname,
     },
     email,
     password,
@@ -32,8 +37,8 @@ module.exports.createCaptain = async ({
       color: vehicle.color,
       vehicleType: vehicle.vehicleType,
       plateNumber: vehicle.plateNumber,
-      capacity: vehicle.capacity
-    }
+      capacity: vehicle.capacity,
+    },
   });
 
   return captain;

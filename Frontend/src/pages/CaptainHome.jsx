@@ -61,7 +61,7 @@ const CaptainHome = () => {
       <div className="h-3/5">
         <img
           className="h-full w-full object-cover"
-          src="https://i2-prod.mylondon.news/article16106961.ece/ALTERNATES/s615/2_Uber-pink-cars.jpg"
+          src="https://t4.ftcdn.net/jpg/05/27/51/01/240_F_527510181_ySkYBj2i4rafZiezJEPynAuthmhMNr51.jpg"
           alt=""
         />
       </div>
