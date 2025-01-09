@@ -13,9 +13,9 @@ function getOtp(num) {
   return generateOtp(num);
 }
 
-async function getFare(pickup, destination, vehicleType) {
-  if (!pickup || !destination || !vehicleType) {
-    throw new Error("Pickup, Destination, and Vehicle Type are required");
+async function getFare(pickup, destination) {
+  if (!pickup || !destination) {
+    throw new Error("Pickup and Destination are required");
   }
 
   const distanceTime = await mapService.getDistanceTime(pickup, destination);
@@ -40,24 +40,22 @@ async function getFare(pickup, destination, vehicleType) {
     motorcycle: 1,
   };
 
-  if (
-    !BASE_FARE[vehicleType] ||
-    !RATE_PER_KM[vehicleType] ||
-    !TIME_RATE[vehicleType]
-  ) {
-    throw new Error("Invalid vehicle type");
+  const fares = {};
+
+  for (const vehicleType of Object.keys(BASE_FARE)) {
+    fares[vehicleType] = Math.round(
+      BASE_FARE[vehicleType] +
+        distanceTime.distance * RATE_PER_KM[vehicleType] +
+        distanceTime.duration * TIME_RATE[vehicleType]
+    );
   }
 
-  const fare = Math.round(
-    BASE_FARE[vehicleType] +
-      distanceTime.distance * RATE_PER_KM[vehicleType] +
-      distanceTime.duration * TIME_RATE[vehicleType]
-  );
+  //   console.log("Calculated Fares:", fares);
 
-  //   console.log("Calculated Fare:", fare);
-
-  return fare;
+  return fares;
 }
+
+module.exports.getFare = getFare;
 
 module.exports.createRide = async ({
   user,
@@ -69,7 +67,13 @@ module.exports.createRide = async ({
     throw new Error("All fields are required");
   }
 
-  const fare = await getFare(pickup, destination, vehicleType);
+  const fares = await getFare(pickup, destination);
+
+  if (!fares[vehicleType]) {
+    throw new Error("Invalid vehicle type");
+  }
+
+  const fare = fares[vehicleType];
 
   //   console.log("Fare for Ride:", fare);
 

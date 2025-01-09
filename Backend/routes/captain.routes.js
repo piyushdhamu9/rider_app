@@ -19,7 +19,7 @@ router.post(
       .withMessage("Color must be atleast 3 character long"),
     body("vehicle.plateNumber")
       .isLength({ min: 3 })
-      .withMessage("Plate number must be atleast 3 character long"),
+      .withMessage("Plate number must be atleast 3 character long ya hwsdjfvb erro aa rha hai"),
     body("vehicle.capacity")
       .isInt({ min: 1 })
       .withMessage("Capacity must be atleast 1"),
