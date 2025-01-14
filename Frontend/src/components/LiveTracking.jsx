@@ -13,42 +13,54 @@ const center = {
 
 const LiveTracking = () => {
   const [currentPosition, setCurrentPosition] = useState(center);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const handleSuccess = (position) => {
+    navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
       setCurrentPosition({
         lat: latitude,
         lng: longitude,
       });
-    };
+    });
 
-    const handleError = (error) => {
-      console.error("Error getting geolocation:", error);
-      setError("Unable to retrieve your location");
-    };
-
-    navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
-
-    const watchId = navigator.geolocation.watchPosition(handleSuccess, handleError);
+    const watchId = navigator.geolocation.watchPosition((position) => {
+      const { latitude, longitude } = position.coords;
+      setCurrentPosition({
+        lat: latitude,
+        lng: longitude,
+      });
+    });
 
     return () => navigator.geolocation.clearWatch(watchId);
   }, []);
 
+  useEffect(() => {
+    const updatePosition = () => {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+
+        console.log("Position updated:", latitude, longitude);
+        setCurrentPosition({
+          lat: latitude,
+          lng: longitude,
+        });
+      });
+    };
+
+    updatePosition(); // Initial position update
+
+    const intervalId = setInterval(updatePosition, 5000); // Update every 5 seconds
+  }, []);
+
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-      {error ? (
-        <div>{error}</div>
-      ) : (
-        <GoogleMap
-          mapContainerStyle={containerStyle}
-          center={currentPosition}
-          zoom={15}
-        >
-          <Marker position={currentPosition} />
-        </GoogleMap>
-      )}
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={currentPosition}
+        zoom={15}
+      >
+        <Marker position={currentPosition} />
+      </GoogleMap>
     </LoadScript>
   );
 };
