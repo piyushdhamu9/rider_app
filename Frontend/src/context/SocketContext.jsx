@@ -1,55 +1,31 @@
-import React, { createContext, useEffect, useState } from "react";
-import { io } from "socket.io-client";
+
+import React, { createContext, useEffect } from 'react';
+import { io } from 'socket.io-client';
 
 export const SocketContext = createContext();
 
+const socket = io(`${import.meta.env.VITE_BASE_URL}`); // Replace with your server URL
+
 const SocketProvider = ({ children }) => {
-  const [socket, setSocket] = useState(null);
+    useEffect(() => {
+        // Basic connection logic
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
 
-  useEffect(() => {
-    const newSocket = io(import.meta.env.VITE_BASE_URL, {
-      transports: ["websocket"],
-      reconnection: true,
-    });
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+        });
 
-    newSocket.on("connect", () => {
-      console.log("Connected to Socket.IO server:", newSocket.id);
-    });
+    }, []);
 
-    newSocket.on("disconnect", () => {
-      console.log("Disconnected from Socket.IO server");
-    });
 
-    setSocket(newSocket);
 
-    return () => {
-      newSocket.close();
-    };
-  }, []);
-
-  const sendMessage = (eventName, message) => {
-    // console.log(`sending message ${message} to ${eventName}`);
-
-    if (socket) {
-      socket.emit(eventName, message);
-    } else {
-      console.error("Socket not initialized");
-    }
-  };
-
-  const receiveMessage = (eventName, callback) => {
-    if (socket) {
-      socket.on(eventName, callback);
-    } else {
-      console.error("Socket not initialized");
-    }
-  };
-
-  return (
-    <SocketContext.Provider value={{ sendMessage, receiveMessage }}>
-      {children}
-    </SocketContext.Provider>
-  );
+    return (
+        <SocketContext.Provider value={{ socket }}>
+            {children}
+        </SocketContext.Provider>
+    );
 };
 
 export default SocketProvider;
