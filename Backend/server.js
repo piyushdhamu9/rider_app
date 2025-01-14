@@ -11,7 +11,7 @@ server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
-// server.on("error", (error) => {
-//   console.error("Server error:", error);
-//   process.exit(1); // Exit process with failure
-// });
+server.on("error", (error) => {
+  console.error("Server error:", error);
+  process.exit(1); // Exit process with failure
+});
