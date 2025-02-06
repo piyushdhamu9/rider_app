@@ -9,6 +9,8 @@ import { useEffect, useContext } from "react";
 import { SocketContext } from "../context/SocketContext";
 import { CaptainDataContext } from "../context/CaptainContext";
 import axios from "axios";
+import Navbar from "../components/Navbar";
+import LiveTracking from "../components/LiveTracking";
 
 const CaptainHome = () => {
   const [ridePopupPanel, setRidePopupPanel] = useState(false);
@@ -26,15 +28,18 @@ const CaptainHome = () => {
       userId: captain._id,
       userType: "captain",
     });
+    
     const updateLocation = () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
+          const location = {
+            lat: position.coords.latitude,  // Changed from ltd to lat
+            lng: position.coords.longitude
+          };
+          
           socket.emit("update-location-captain", {
             userId: captain._id,
-            location: {
-              ltd: position.coords.latitude,
-              lng: position.coords.longitude,
-            },
+            location: location
           });
         });
       }
@@ -43,7 +48,7 @@ const CaptainHome = () => {
     const locationInterval = setInterval(updateLocation, 10000);
     updateLocation();
 
-    // return () => clearInterval(locationInterval)
+    return () => clearInterval(locationInterval);
   }, []);
 
   socket.on("new-ride", (data) => {
@@ -100,50 +105,49 @@ const CaptainHome = () => {
   );
 
   return (
-    <div className="h-screen">
-      <div className="fixed p-6 top-0 flex items-center justify-between w-screen">
-        <img
-          className="w-16"
-          src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
-          alt=""
-        />
-        <Link
-          to="/captain-home"
-          className=" h-10 w-10 bg-white flex items-center justify-center rounded-full"
+    <div className="h-screen flex flex-col">
+      <Navbar />
+      <div className="flex h-[calc(100vh-64px)]">
+        {/* Left Section */}
+        <div className="w-1/3 p-6 bg-white shadow-lg">
+          <CaptainDetails />
+        </div>
+
+        {/* Right Section - Map */}
+        <div className="w-2/3 h-full">
+          <LiveTracking 
+            isCaptain={true}
+            currentLocation={{
+              lat: parseFloat(captain?.location?.lat) || 0,
+              lng: parseFloat(captain?.location?.lng) || 0
+            }}
+          />
+        </div>
+
+        {/* Ride Popup Panel */}
+        <div
+          ref={ridePopupPanelRef}
+          className="fixed w-1/3 z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 left-0"
         >
-          <i className="text-lg font-medium ri-logout-box-r-line"></i>
-        </Link>
-      </div>
-      <div className="h-3/5">
-        <img
-          className="h-full w-full object-cover"
-          src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif"
-          alt=""
-        />
-      </div>
-      <div className="h-2/5 p-6">
-        <CaptainDetails />
-      </div>
-      <div
-        ref={ridePopupPanelRef}
-        className="fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12"
-      >
-        <RidePopUp
-          ride={ride}
-          setRidePopupPanel={setRidePopupPanel}
-          setConfirmRidePopupPanel={setConfirmRidePopupPanel}
-          confirmRide={confirmRide}
-        />
-      </div>
-      <div
-        ref={confirmRidePopupPanelRef}
-        className="fixed w-full h-screen z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12"
-      >
-        <ConfirmRidePopUp
-          ride={ride}
-          setConfirmRidePopupPanel={setConfirmRidePopupPanel}
-          setRidePopupPanel={setRidePopupPanel}
-        />
+          <RidePopUp
+            ride={ride}
+            setRidePopupPanel={setRidePopupPanel}
+            setConfirmRidePopupPanel={setConfirmRidePopupPanel}
+            confirmRide={confirmRide}
+          />
+        </div>
+
+        {/* Confirm Ride Popup Panel */}
+        <div
+          ref={confirmRidePopupPanelRef}
+          className="fixed w-1/3 h-screen z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 left-0"
+        >
+          <ConfirmRidePopUp
+            ride={ride}
+            setConfirmRidePopupPanel={setConfirmRidePopupPanel}
+            setRidePopupPanel={setRidePopupPanel}
+          />
+        </div>
       </div>
     </div>
   );

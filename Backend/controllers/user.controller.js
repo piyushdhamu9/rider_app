@@ -34,7 +34,11 @@ module.exports.registerUser = async (req, res, next) => {
 module.exports.loginUser = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return res.status(400).json({ 
+      status: "error",
+      message: "Validation failed",
+      errors: errors.array() 
+    });
   }
 
   const { email, password } = req.body;
@@ -42,20 +46,28 @@ module.exports.loginUser = async (req, res, next) => {
   const user = await userModel.findOne({ email }).select("+password");
 
   if (!user) {
-    return res.status(401).json({ message: "Invalid email or password" });
+    return res.status(404).json({ 
+      status: "error",
+      message: "No user found with this email. Please signup first!" 
+    });
   }
 
   const isMatch = await user.comparePassword(password);
 
   if (!isMatch) {
-    return res.status(401).json({ message: "Invalid email or password" });
+    return res.status(401).json({ 
+      status: "error",
+      message: "Invalid password. Please try again!" 
+    });
   }
 
   const token = user.generateAuthToken();
-
   res.cookie("token", token);
-
-  res.status(200).json({ token, user });
+  res.status(200).json({ 
+    status: "success",
+    token, 
+    user 
+  });
 };
 
 module.exports.getUserProfile = async (req, res, next) => {

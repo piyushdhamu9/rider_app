@@ -1,22 +1,26 @@
 import React from "react";
 
 const VehiclePanel = (props) => {
+  const handleVehicleSelect = (type) => {
+    props.selectVehicle(type);
+    props.setVehiclePanel(false); // Hide vehicle panel
+    props.setConfirmRidePanel(true); // Show confirm ride panel
+  };
+
   return (
-    <div>
-      <h5
-        className="p-1 text-center w-[93%] absolute top-0"
-        onClick={() => {
-          props.setVehiclePanel(false);
-        }}
-      >
-        <i className="text-3xl text-gray-200 ri-arrow-down-wide-line"></i>
-      </h5>
-      <h3 className="text-2xl font-semibold mb-5">Choose a Vehicle</h3>
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-5">
+        <h3 className="text-2xl font-semibold">Choose a Ride</h3>
+        <button 
+          onClick={() => props.setVehiclePanel(false)}
+          className="text-gray-500 hover:text-gray-700"
+        >
+          <i className="ri-arrow-left-line text-xl"></i>
+        </button>
+      </div>
+
       <div
-        onClick={() => {
-          props.setConfirmRidePanel(true);
-          props.selectVehicle("car");
-        }}
+        onClick={() => handleVehicleSelect("car")}
         className="flex border-2 active:border-black  mb-2 rounded-xl w-full p-3  items-center justify-between"
       >
         <img
@@ -38,11 +42,9 @@ const VehiclePanel = (props) => {
         </div>
         <h2 className="text-lg font-semibold">₹{props.fare.car}</h2>
       </div>
+
       <div
-        onClick={() => {
-          props.setConfirmRidePanel(true);
-          props.selectVehicle("moto");
-        }}
+        onClick={() => handleVehicleSelect("moto")}
         className="flex border-2 active:border-black mb-2 rounded-xl w-full p-3  items-center justify-between"
       >
         <img
@@ -64,11 +66,9 @@ const VehiclePanel = (props) => {
         </div>
         <h2 className="text-lg font-semibold">₹{props.fare.moto}</h2>
       </div>
+
       <div
-        onClick={() => {
-          props.setConfirmRidePanel(true);
-          props.selectVehicle("auto");
-        }}
+        onClick={() => handleVehicleSelect("auto")}
         className="flex border-2 active:border-black mb-2 rounded-xl w-full p-3  items-center justify-between"
       >
         <img

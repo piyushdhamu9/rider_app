@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { LoadScript, GoogleMap, Marker } from "@react-google-maps/api";
+import { LoadScript, GoogleMap, Marker, DirectionsService, DirectionsRenderer } from "@react-google-maps/api";
 
 const containerStyle = {
   width: "100%",
@@ -11,8 +11,9 @@ const center = {
   lng: -38.523,
 };
 
-const LiveTracking = () => {
+const LiveTracking = ({ pickup, destination, showDirections }) => {
   const [currentPosition, setCurrentPosition] = useState(center);
+  const [directions, setDirections] = useState(null);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -35,22 +36,23 @@ const LiveTracking = () => {
   }, []);
 
   useEffect(() => {
-    const updatePosition = () => {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude } = position.coords;
-
-        console.log("Position updated:", latitude, longitude);
-        setCurrentPosition({
-          lat: latitude,
-          lng: longitude,
-        });
-      });
-    };
-
-    updatePosition(); // Initial position update
-
-    const intervalId = setInterval(updatePosition, 5000); // Update every 5 seconds
-  }, []);
+    if (showDirections && pickup && destination) {
+      const directionsService = new window.google.maps.DirectionsService();
+      
+      directionsService.route(
+        {
+          origin: pickup,
+          destination: destination,
+          travelMode: window.google.maps.TravelMode.DRIVING,
+        },
+        (result, status) => {
+          if (status === "OK") {
+            setDirections(result);
+          }
+        }
+      );
+    }
+  }, [pickup, destination, showDirections]);
 
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
@@ -59,7 +61,8 @@ const LiveTracking = () => {
         center={currentPosition}
         zoom={15}
       >
-        <Marker position={currentPosition} />
+        {currentPosition && <Marker position={currentPosition} />}
+        {directions && <DirectionsRenderer directions={directions} />}
       </GoogleMap>
     </LoadScript>
   );
